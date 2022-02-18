@@ -37,30 +37,10 @@ public class SwaggerTo
         .withGeneratedExamples()
         .withoutInlineSchema()
         .build();
-        Swagger2MarkupConverter
-        .from(new URL("http://localhost:8080/v2/api-docs?group=user"))  //url，注意端口号与分组.withConfig(config)
-        .build()
-        .toFolder(Paths.get("src/docs/markdown/generated"));                //生成文件的存放路径，生成多个文件
-    }
-
-    /**
-     * 生成Markdown格式文档,并汇总成一个文件
-     * @throws Exception
-     */
-    @Test
-    public void generateMarkdownDocsToFile() throws Exception {
-        //    输出Markdown到单文件
-        Swagger2MarkupConfig config = new Swagger2MarkupConfigBuilder()
-        .withMarkupLanguage(MarkupLanguage.MARKDOWN)    //输出格式：ASCIIDOC，MARKDOWN，CONFLUENCE_MARKUP
-        .withOutputLanguage(Language.ZH)                //语言类型：中文（ZH） 默认英文（EN）
-        .withPathsGroupedBy(GroupBy.TAGS)                //Api排序规则
-        .withGeneratedExamples()
-        .withoutInlineSchema()
-        .build();
-
-        Swagger2MarkupConverter.from(new URL("http://localhost:8080/v2/api-docs?group=user"))    //url，注意端口号与分组
+        Swagger2MarkupConverter.from(new URL("http://localhost:8080/v2/api-docs?group=user"))  //url，注意端口号与分组.withConfig(config)
         .withConfig(config)
         .build()
-        .toFile(Paths.get("src/docs/markdown/generated/all"));                 //生成文件的存放路径，汇总为一个文件
+        .toFolder(Paths.get("src/docs/markdown"));                //生成文件的存放路径，生成多个文件
+//        .toFile(Paths.get("src/docs/markdown/generated/all"));                 //生成文件的存放路径，汇总为一个文件
     }
 }

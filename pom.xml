@@ -18,6 +18,15 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
+  <!--阿里云仓库依赖优先下载-->
+  <repositories>
+    <repository>
+      <id>aliyun</id>
+      <name>aliyun</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </repository>
+  </repositories>
+
   <!--父工程，统一控制springboot相关依赖的版本-->
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -30,7 +39,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
 
