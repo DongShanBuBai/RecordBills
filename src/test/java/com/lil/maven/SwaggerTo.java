@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 
 /**
+ * 导出swagger文档
  * Unit test for simple RecordBillsApplication.
  */
 @RunWith(SpringRunner.class) //测试类要使用注入的类
@@ -40,7 +41,7 @@ public class SwaggerTo
         Swagger2MarkupConverter.from(new URL("http://localhost:8080/v2/api-docs?group=user"))  //url，注意端口号与分组.withConfig(config)
         .withConfig(config)
         .build()
-        .toFolder(Paths.get("src/docs/markdown"));                //生成文件的存放路径，生成多个文件
+        .toFile(Paths.get("src/docs/markdown/"));                //生成文件的存放路径，生成多个文件
 //        .toFile(Paths.get("src/docs/markdown/generated/all"));                 //生成文件的存放路径，汇总为一个文件
     }
 }
