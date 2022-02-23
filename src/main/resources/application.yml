@@ -1,0 +1,43 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    #使用该数据库驱动需要设置时区
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #若mysql数据库的字符集和项目的字符集都为utf8，则可以不写characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=true
+    username: root
+    password: Aa0123456
+    #d使用druid数据库连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    #开启druid数据监控统计功能
+    filters: stat
+    #最大连接数据库连接数,设 0 为没有限制
+    maxActive: 20
+    #初始化连接数个数
+    initialSize: 1
+    #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制
+    maxWait: 60000
+    #连接池中最小空闲连接数，当连接数少于此值时，连接池会创建连接来补充到该值的数量
+    minIdle: 1
+    #每timeBetweenEvictionRunsMillis毫秒秒检查一次连接池中空闲的连接,把空闲时间超
+    #过minEvictableIdleTimeMillis毫秒的连接断开,直到连接池中的连接数到minIdle为止
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    #系统启动时通过该sql语句验证数据库是否可用，例如oracle用SELECT 'x' from dual，mysql用SELECT 'x'
+    validationQuery: select 'x'
+    #启用空闲连接检测，以便回收
+    testWhileIdle: true
+    #从连接池获取连接时，是否检测连接可用性，开启性能会有些许影响
+    testOnBorrow: false
+    #释放连接到连接池时，是否检测连接可用性，开启性能会有些许影响
+    testOnReturn: false
+    #开启psCache缓存，oracle建议设置为true，非oracle建议设置为false
+    poolPreparedStatements: true
+    #最大缓存数，非oracle建议设置为0
+    maxPoolPreparedStatementPerConnectionSize: 20
+    maxOpenPreparedStatements: 20
+
+#配置mapper，有的可能使用mybatis-plus
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
