@@ -5,7 +5,7 @@ spring:
     #使用该数据库驱动需要设置时区
     driver-class-name: com.mysql.cj.jdbc.Driver
     #若mysql数据库的字符集和项目的字符集都为utf8，则可以不写characterEncoding=utf8
-    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=true
+    url: jdbc:mysql://localhost:3306/recordbills?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=true
     username: root
     password: Aa0123456
     #d使用druid数据库连接池
