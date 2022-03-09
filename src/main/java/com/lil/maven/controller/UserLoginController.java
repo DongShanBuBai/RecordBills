@@ -8,7 +8,8 @@ import com.lil.maven.pojo.User;
 import com.lil.maven.pojo.UserProfile;
 import com.lil.maven.pojo.WeChatUserInfo;
 import com.lil.maven.resultformat.msgcode.MsgCode;
-import com.lil.maven.resultformat.resultdataformat.ResultData;
+import com.lil.maven.resultformat.ResultData;
+import com.lil.maven.service.TokenService;
 import com.lil.maven.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,8 @@ public class UserLoginController {
     UserMapper userMapper;
     @Autowired
     UserProfileMapper userProfileMapper;
+    @Autowired
+    TokenService tokenService;
 
     /**
      * 通过RequestBody将json数据进行反序列化得到weChatUserInfo，code为参数调用weChatUserLoginService()
@@ -62,9 +65,10 @@ public class UserLoginController {
             //ResultData响应体中将返回UserProfile类型的data
             UserProfile userProfile = userProfileMapper.queryAllByUserId(user);
 //            return ResultData.success(user);
-            ResultData<UserProfile> loginData = ResultData.success(userProfile);
-            System.out.println(loginData);
-            return loginData;
+            String token = tokenService.buildToken(userProfile.getUserId());
+            ResultData<UserProfile> resultData = ResultData.success(userProfile,token);
+            System.out.println(resultData);
+            return resultData;
         }catch(Exception e){
             e.printStackTrace();
             return ResultData.fail(MsgCode.MSG_CODE500.getCode(),MsgCode.MSG_CODE500.getMsg());

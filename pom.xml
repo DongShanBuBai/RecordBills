@@ -133,6 +133,13 @@
       <artifactId>xmlunit-core</artifactId>
     </dependency>-->
 
+    <!--JWT的token授权-->
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>6.0</version>
+    </dependency>
+
   </dependencies>
 
   <!--<build>
