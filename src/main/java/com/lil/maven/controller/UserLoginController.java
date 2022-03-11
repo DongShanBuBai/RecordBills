@@ -2,6 +2,7 @@ package com.lil.maven.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.lil.maven.common.annotation.LoginCheck;
 import com.lil.maven.dao.mapper.UserMapper;
 import com.lil.maven.dao.mapper.UserProfileMapper;
 import com.lil.maven.pojo.User;
