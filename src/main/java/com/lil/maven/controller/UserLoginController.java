@@ -13,6 +13,7 @@ import com.lil.maven.resultformat.ResultData;
 import com.lil.maven.service.TokenService;
 import com.lil.maven.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -74,6 +75,12 @@ public class UserLoginController {
             e.printStackTrace();
             return ResultData.fail(MsgCode.MSG_CODE500.getCode(),MsgCode.MSG_CODE500.getMsg());
         }
+    }
+
+    @LoginCheck
+    @PostMapping("/tokenTest")
+    public String tokenTest(){
+        return "tokenTest 方法";
     }
 }
 
