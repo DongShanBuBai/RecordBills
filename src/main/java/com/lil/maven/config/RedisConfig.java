@@ -34,7 +34,7 @@ import java.time.Duration;
  * @Date: 2022-03-20
  */
 //开启缓存
-//@EnableCaching
+@EnableCaching
 @PropertySource({"classpath:application.properties"})
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport{
