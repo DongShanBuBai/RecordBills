@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lil.maven.dao.mapper.UserProfileMapper">
+    <select id="queryAllByUserId" parameterType="com.lil.maven.pojo.User" resultType="com.lil.maven.pojo.UserProfile">
+        select * from user_profile where user_id=#{userId}
+    </select>
+
+    <insert id="insertAtAll" parameterType="com.lil.maven.pojo.UserProfile">
+        insert into user_profile(user_id,nickname,avatarurl,gender,country,province,city,create_time,phone_number)
+         value(#{userId},#{nickName},#{avatarUrl},#{gender},#{country},#{province},#{city},#{createTime},#{phoneNumber})
+    </insert>
+</mapper>
