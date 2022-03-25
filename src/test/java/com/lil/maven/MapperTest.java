@@ -45,6 +45,7 @@ public class MapperTest {
         logger.warn("log4j warn");
         logger.error("error test!");
         logger.fatal("log4j fatal");
+        logger.error("error-[{}]","testLogger");
     }
     @Test
     public void redisTest(){

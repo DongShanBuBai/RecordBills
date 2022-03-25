@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +26,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.lang.Nullable;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.time.Duration;
@@ -54,6 +59,8 @@ public class RedisConfig extends CachingConfigurerSupport{
     private int maxIdle;
     @Value("${spring.redis.pool.minIdle}")
     private int minIdle;
+
+    private Logger logger;
 
     /**
      * 自定义缓存key的生成策略
@@ -153,6 +160,40 @@ public class RedisConfig extends CachingConfigurerSupport{
 
         RedisCacheManager redisCacheManager = new RedisCacheManager(redisCacheWriter,defaultCacheConfiguration);
         return redisCacheManager;
+    }
+
+    /**
+     * redis发生异常时只打印日志，程序正常运行
+     * @return
+     */
+    @Override
+    @Bean
+    public CacheErrorHandler errorHandler(){
+        logger = LogManager.getLogger(RedisConfig.class);
+        logger.info("初始化--->[{}]","Redis CacheErrorHandler");
+        //匿名内部类创建CacheErrorHandler的实例
+        CacheErrorHandler cacheErrorHandler = new CacheErrorHandler() {
+            @Override
+            public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
+                logger.error(exception.getMessage(),exception);
+            }
+
+            @Override
+            public void handleCachePutError(RuntimeException exception, Cache cache, Object key, @Nullable Object value) {
+                logger.error(exception.getMessage(),exception);
+            }
+
+            @Override
+            public void handleCacheEvictError(RuntimeException exception, Cache cache, Object key) {
+                logger.error(exception.getMessage(),exception);
+            }
+
+            @Override
+            public void handleCacheClearError(RuntimeException exception, Cache cache) {
+                logger.error(exception.getMessage(),exception);
+            }
+        };
+        return cacheErrorHandler;
     }
 }
 
