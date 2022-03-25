@@ -1,12 +1,15 @@
 package com.lil.maven.service.impl;
 
-import com.lil.maven.resultformat.exception.TokenException;
+import com.lil.maven.responseformat.RespondData;
+import com.lil.maven.responseformat.exception.TokenException;
 import com.lil.maven.service.TokenService;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -23,6 +26,8 @@ import java.util.Objects;
 public class TokenServiceImpl implements TokenService {
     private final byte[] SECRET = "KdDFG2joh8JhsBojfojsLrKpuMCidYTcieSGhohi8jzXmkFmkclCkdjplaWjopeuMB".getBytes();
     private final long EXPIRE_TIME = 1000 * 60;  //token到期时间
+    private Map<String,Object> map = new HashMap<>();
+    Logger logger = LogManager.getLogger(TokenServiceImpl.class);
 
     @Override
     public String buildToken(Integer userId){
@@ -51,28 +56,47 @@ public class TokenServiceImpl implements TokenService {
         return null;
     }
 
-    public Integer verifyToken(String token){
+    public RespondData<Map> verifyToken(String token){
         try{
             SignedJWT signedJWT = SignedJWT.parse(token);
             JWSVerifier jwsVerifier = new MACVerifier(SECRET);
 
             if (!signedJWT.verify(jwsVerifier)){
-                throw new TokenException("-1","token无效");
+                logger.error("token无效！");
+                return null;
             }
+
+            //从token中获取userId
+            Integer userId = signedJWT.getJWTClaimsSet().getIntegerClaim("USERID");
+
             Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             if (new Date().after(expirationTime)){
-                throw new TokenException("-2","token已过期");
+                if (!isTokenRealExpird(token)){
+                    //该token在redis中未过期,创建新的token
+                    String newToken = buildToken(userId);
+                    map.put("token",newToken);
+                }else{
+                    logger.error("token已经彻底过期！");
+                    return null;
+                }
             }
-            Integer userId = signedJWT.getJWTClaimsSet().getIntegerClaim("USERID");
+
             if (Objects.isNull(userId)){
-                throw new TokenException("-3","userId为空");
+                logger.error("userId不存在！");
+                return null;
             }
-            return userId;
+
+            map.put("userId",userId);
+            return RespondData.success(map);
         }catch(ParseException e){
             e.printStackTrace();
         }catch (JOSEException e){
             e.printStackTrace();
         }
         return null;
+    }
+    public boolean isTokenRealExpird(String token){
+        //到redis中查询token是否存在
+        return true;
     }
 }

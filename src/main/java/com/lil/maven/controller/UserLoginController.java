@@ -8,15 +8,16 @@ import com.lil.maven.dao.mapper.UserProfileMapper;
 import com.lil.maven.pojo.User;
 import com.lil.maven.pojo.UserProfile;
 import com.lil.maven.pojo.WeChatUserInfo;
-import com.lil.maven.resultformat.msgcode.MsgCode;
-import com.lil.maven.resultformat.ResultData;
+import com.lil.maven.responseformat.msgcode.GenericCode;
+import com.lil.maven.responseformat.RespondData;
 import com.lil.maven.service.TokenService;
 import com.lil.maven.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author:lil
@@ -42,9 +43,9 @@ public class UserLoginController {
      * @return 返回ResultData响应体
      */
     @PostMapping("/weChatLogin")
-    public ResultData<UserProfile> weChatLogin(@RequestBody WeChatUserInfo weChatUserInfo){
+    public RespondData<Map> weChatLogin(@RequestBody WeChatUserInfo weChatUserInfo){
         if (weChatUserInfo.getCode() == null || weChatUserInfo.getRawData() == null){
-            return ResultData.fail(MsgCode.MSG_CODE10001.getCode(),MsgCode.MSG_CODE10001.getMsg());
+            return RespondData.fail(GenericCode.MSG_CODE10001.getCode(), GenericCode.MSG_CODE10001.getMsg());
         }
         try{
             JSONObject jsonObjectWithOpenId = userLoginService.weChatUserLoginService(weChatUserInfo.getCode());
@@ -66,14 +67,18 @@ public class UserLoginController {
             }
             //ResultData响应体中将返回UserProfile类型的data
             UserProfile userProfile = userProfileMapper.queryAllByUserId(user);
-//            return ResultData.success(user);
+//            return RespondData.success(user);
             String token = tokenService.buildToken(userProfile.getUserId());
-            ResultData<UserProfile> resultData = ResultData.success(userProfile,token);
-            System.out.println(resultData);
-            return resultData;
+            Map<String,Object> map = new HashMap<>();
+            map.put("token",token);
+            map.put("userMessage",userProfile);
+
+            RespondData<Map> respondData = RespondData.success(map);
+            System.out.println(respondData);
+            return respondData;
         }catch(Exception e){
             e.printStackTrace();
-            return ResultData.fail(MsgCode.MSG_CODE500.getCode(),MsgCode.MSG_CODE500.getMsg());
+            return RespondData.fail(GenericCode.MSG_CODE500.getCode(), GenericCode.MSG_CODE500.getMsg());
         }
     }
 

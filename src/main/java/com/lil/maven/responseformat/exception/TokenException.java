@@ -1,4 +1,4 @@
-package com.lil.maven.resultformat.exception;
+package com.lil.maven.responseformat.exception;
 
 /**
  * @Author:lil

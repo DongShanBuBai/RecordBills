@@ -1,6 +1,8 @@
 package com.lil.maven.Utils;
 
 import com.lil.maven.common.annotation.LoginCheck;
+import com.lil.maven.responseformat.RespondData;
+import com.lil.maven.responseformat.msgcode.TokenCode;
 import com.lil.maven.service.TokenService;
 import com.lil.maven.service.impl.TokenServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +13,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
 
 /**
  * 定义拦截器，注解标记方法，检查是否登录
@@ -38,19 +43,40 @@ public class SourceAccessInterceptor implements HandlerInterceptor{
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,Object handler) throws Exception{
         HandlerMethod handlerMethod = (HandlerMethod)handler;
         LoginCheck loginCheck = handlerMethod.getMethod().getAnnotation(LoginCheck.class);
+
         if (loginCheck == null){
             return true;
         }
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
+
         String token = request.getHeader("TOKEN");
         if (token == null){
-            logger.info("token 为空！");
+            logger.error("token 为空！");
+            respondWriter(RespondData.fail(TokenCode.MSG_CODE401.getCode(),TokenCode.MSG_CODE401.getMsg()),response);
             return false;
         }
-        Integer userId = tokenService.verifyToken(token);
-        if (userId != null){
-            logger.info("userId："+userId+"----token验证通过！");
-            return true;
+        RespondData<Map> tokenServiceRespondData = tokenService.verifyToken(token);
+        if ((tokenServiceRespondData != null) && (tokenServiceRespondData.getStatus() == 200)){
+            Map map = tokenServiceRespondData.getData();
+            if (map.containsKey("token")){
+                String newToken = tokenServiceRespondData.getData().get(token).toString();
+                if (newToken != null){
+                    respondWriter(RespondData.fail(TokenCode.MSG_CODE20001.getCode(),TokenCode.MSG_CODE20001.getMsg()),response);
+                    return false;
+                }else{
+                    respondWriter(RespondData.fail(TokenCode.MSG_CODE401.getCode(),TokenCode.MSG_CODE401.getMsg()),response);
+                    return false;
+                }
+            }else{
+                Integer userId = (Integer) tokenServiceRespondData.getData().get("userId");
+                request.setAttribute("userId",userId);
+                logger.info("userId："+tokenServiceRespondData+"----token验证通过！");
+                return true;
+            }
+
         }
+        respondWriter(RespondData.fail(TokenCode.MSG_CODE401.getCode(),TokenCode.MSG_CODE401.getMsg()),response);
         return false;
     }
 
@@ -76,5 +102,19 @@ public class SourceAccessInterceptor implements HandlerInterceptor{
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,Object handler,Exception e) throws Exception {
 
+    }
+
+    private void respondWriter(RespondData respondData,HttpServletResponse response){
+        PrintWriter printWriter = null;
+        try{
+            printWriter = response.getWriter();
+            printWriter.print(respondData);
+        }catch(IOException e){
+            logger.error("拦截器输出流异常！"+e);
+        }finally {
+            if (printWriter != null){
+                printWriter.close();
+            }
+        }
     }
 }

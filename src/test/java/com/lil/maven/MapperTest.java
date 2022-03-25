@@ -2,7 +2,7 @@ package com.lil.maven;
 
 import com.lil.maven.dao.mapper.UserMapper;
 import com.lil.maven.pojo.User;
-import com.lil.maven.resultformat.ResultData;
+import com.lil.maven.responseformat.RespondData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class MapperTest {
     }
     @Test
     public void resultDataTest(){
-        ResultData<String> data = ResultData.success("Hello");
+        RespondData<String> data = RespondData.success("Hello");
         System.out.println(data);
     }
     @Test

@@ -1,4 +1,4 @@
-package com.lil.maven.resultformat.msgcode;
+package com.lil.maven.responseformat.msgcode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum MsgCode {
+public enum GenericCode {
     MSG_CODE200(200,"请求成功"),
     MSG_CODE400(400,"客户端错误"),
     MSG_CODE403(403,"已拒绝该请求"),
