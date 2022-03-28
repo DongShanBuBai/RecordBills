@@ -9,4 +9,5 @@ import com.lil.maven.responseformat.RespondData;
 public interface TokenService {
     String buildToken(Integer userId);
     RespondData verifyToken(String token);
+    boolean isTokenRealExpird(Integer userId,String token);
 }

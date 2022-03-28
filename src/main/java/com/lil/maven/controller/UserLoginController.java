@@ -12,9 +12,13 @@ import com.lil.maven.responseformat.msgcode.GenericCode;
 import com.lil.maven.responseformat.RespondData;
 import com.lil.maven.service.TokenService;
 import com.lil.maven.service.UserLoginService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +38,8 @@ public class UserLoginController {
     UserProfileMapper userProfileMapper;
     @Autowired
     TokenService tokenService;
+
+    Logger logger = LogManager.getLogger(UserLoginController.class);
 
     /**
      * 通过RequestBody将json数据进行反序列化得到weChatUserInfo，code为参数调用weChatUserLoginService()
@@ -56,12 +62,14 @@ public class UserLoginController {
             User user = userMapper.queryByWeChatOpenId(openId);
             if (user == null){
                 //不存在，第一次登陆，新建用户信息
+                logger.info("用户第一次登录");
                 user = new User();
                 user.setUserWechatOpenid(openId);
                 user.setLastLoginTime(new Date());
                 userLoginService.addUserAndProfile(user,jsonObjectWithRawData);
             }else{
                 //不是第一次登陆，修改最后登陆时间
+                logger.info("用户登录");
                 user.setLastLoginTime(new Date());
                 userMapper.updateUserLastLoginTime(user);
             }
@@ -84,8 +92,13 @@ public class UserLoginController {
 
     @LoginCheck
     @PostMapping("/tokenTest")
-    public String tokenTest(){
-        return "tokenTest 方法";
+    public String tokenTest(@RequestAttribute("userId") Integer userId, @Nullable @RequestAttribute("newToken") String newToken){
+        if (newToken != null){
+            logger.info("过期token为空",newToken);
+        }
+        String key = "1token";
+
+        return userId.toString();
     }
 }
 

@@ -1,5 +1,6 @@
 package com.lil.maven;
 
+import com.lil.maven.Utils.RedisUtil;
 import com.lil.maven.dao.mapper.UserMapper;
 import com.lil.maven.pojo.User;
 import com.lil.maven.responseformat.RespondData;
@@ -22,12 +23,14 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class MapperTest {
+    @Autowired
+    private RedisUtil redisUtil;
     Logger logger = LogManager.getLogger(MapperTest.class);
 
     @Autowired
     UserMapper userMapper;
-    @Autowired
-    RedisTemplate redisTemplate;
+/*    @Autowired
+    RedisTemplate redisTemplate;*/
     @Test
     public void test(){
         User result = userMapper.queryByUserName("123456");
@@ -47,7 +50,7 @@ public class MapperTest {
         logger.fatal("log4j fatal");
         logger.error("error-[{}]","testLogger");
     }
-    @Test
+/*    @Test
     public void redisTest(){
         String string = "redis demo1";
         Map<String,Object> map = new HashMap<>();
@@ -57,5 +60,15 @@ public class MapperTest {
         map.put("id",integer);
         redisTemplate.opsForValue().set("demo1",map);
         logger.warn(redisTemplate.opsForValue().get("demo1"));
+    }*/
+    @Test
+    public void redisKeyTest(){
+        String key = "login:token4";
+        if (redisUtil.exists(key)){
+            String value = redisUtil.get(key).toString();
+            logger.info("在缓存中查到了key--->[{}]的value[{}]",key,value);
+        }else{
+            logger.info("缓存未生效");
+        }
     }
 }

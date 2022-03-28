@@ -53,7 +53,7 @@ public class SourceAccessInterceptor implements HandlerInterceptor{
         String token = request.getHeader("TOKEN");
         if (token == null){
             logger.error("token 为空！");
-            respondWriter(RespondData.fail(TokenCode.MSG_CODE401.getCode(),TokenCode.MSG_CODE401.getMsg()),response);
+            respondWriter(RespondData.fail(TokenCode.MSG_CODE401.getCode(),TokenCode.MSG_CODE400.getMsg()),response);
             return false;
         }
         RespondData<Map> tokenServiceRespondData = tokenService.verifyToken(token);
@@ -62,10 +62,13 @@ public class SourceAccessInterceptor implements HandlerInterceptor{
             if (map.containsKey("token")){
                 String newToken = tokenServiceRespondData.getData().get(token).toString();
                 if (newToken != null){
-                    respondWriter(RespondData.fail(TokenCode.MSG_CODE20001.getCode(),TokenCode.MSG_CODE20001.getMsg()),response);
-                    return false;
+                    //token在redis中存在
+                    //将更新后的token放到请求域中
+                    request.setAttribute("newToken",newToken);
+                    respondWriter(RespondData.success(newToken),response);
+                    return true;
                 }else{
-                    respondWriter(RespondData.fail(TokenCode.MSG_CODE401.getCode(),TokenCode.MSG_CODE401.getMsg()),response);
+                    respondWriter(RespondData.fail(TokenCode.MSG_CODE401.getCode(),TokenCode.MSG_CODE403.getMsg()),response);
                     return false;
                 }
             }else{

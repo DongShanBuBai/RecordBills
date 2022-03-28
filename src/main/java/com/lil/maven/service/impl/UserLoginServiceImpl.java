@@ -35,8 +35,10 @@ public class UserLoginServiceImpl implements UserLoginService {
      */
     @Override
     public JSONObject weChatUserLoginService(String code){
-        String weChatSecret = "微信秘钥";
-        String weChatAppId = "微信appid";
+        //微信秘钥
+        String weChatSecret = "25398ffa36b9d91cb060f4695ab22907";
+        //微信appid
+        String weChatAppId = "wx6f66165af5ea707a";
         String codeSession2Url = "https://api.weixin.qq.com/sns/jscode2session";
 
         Map<String,String> requestForCodeSessionURLParam = new HashMap<String,String>();
