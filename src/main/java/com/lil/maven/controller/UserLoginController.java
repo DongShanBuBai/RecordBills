@@ -94,11 +94,10 @@ public class UserLoginController {
     @PostMapping("/tokenTest")
     public String tokenTest(@RequestAttribute("userId") Integer userId, @Nullable @RequestAttribute("newToken") String newToken){
         if (newToken != null){
-            logger.info("过期token为空",newToken);
+            logger.info("token已经更新",newToken);
         }
-        String key = "1token";
 
-        return userId.toString();
+        return userId.toString()+newToken;
     }
 }
 

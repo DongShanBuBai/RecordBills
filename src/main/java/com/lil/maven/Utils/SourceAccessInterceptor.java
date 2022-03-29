@@ -7,6 +7,8 @@ import com.lil.maven.service.TokenService;
 import com.lil.maven.service.impl.TokenServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,7 +25,8 @@ import java.util.Map;
  * @Date: 2022-03-09
  */
 public class SourceAccessInterceptor implements HandlerInterceptor{
-    TokenService tokenService = new TokenServiceImpl();
+    @Autowired
+    private TokenService tokenService;
 
     Logger logger = LogManager.getLogger(SourceAccessInterceptor.class);
 
@@ -59,21 +62,20 @@ public class SourceAccessInterceptor implements HandlerInterceptor{
         RespondData<Map> tokenServiceRespondData = tokenService.verifyToken(token);
         if ((tokenServiceRespondData != null) && (tokenServiceRespondData.getStatus() == 200)){
             Map map = tokenServiceRespondData.getData();
-            if (map.containsKey("token")){
-                String newToken = tokenServiceRespondData.getData().get(token).toString();
+            Integer userId = (Integer) map.get("userId");
+            request.setAttribute("userId",userId);
+            if (map.containsKey("newToken")){
+                String newToken = map.get("newToken").toString();
                 if (newToken != null){
                     //token在redis中存在
                     //将更新后的token放到请求域中
                     request.setAttribute("newToken",newToken);
-                    respondWriter(RespondData.success(newToken),response);
                     return true;
                 }else{
                     respondWriter(RespondData.fail(TokenCode.MSG_CODE401.getCode(),TokenCode.MSG_CODE403.getMsg()),response);
                     return false;
                 }
             }else{
-                Integer userId = (Integer) tokenServiceRespondData.getData().get("userId");
-                request.setAttribute("userId",userId);
                 logger.info("userId："+tokenServiceRespondData+"----token验证通过！");
                 return true;
             }

@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -96,7 +93,7 @@ public class TokenServiceImpl implements TokenService {
                 if (!isTokenRealExpird(userId,token)){
                     //该token在redis中未过期,创建新的token
                     String newToken = buildToken(userId);
-                    map.put("token",newToken);
+                    map.put("newToken",newToken);
                 }else{
                     logger.error("token已经彻底过期！");
                     return null;
@@ -127,10 +124,18 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public boolean isTokenRealExpird(Integer userId,String token){
         String key = "login:token"+userId;
-        String value = redisUtil.get(key).toString();
-        if (token.equals(value)){
-            //在redis中存在用户的token
-            return false;
+        if (redisUtil.exists(key)){
+            String redisToken = redisUtil.get(key).toString();
+            logger.error(token);
+            logger.error(redisToken);
+            logger.error(token.length());
+            logger.error(redisToken.length());
+            logger.error(Arrays.toString(token.getBytes()));
+            logger.error(Arrays.toString(redisToken.getBytes()));
+            if (token.equals(redisToken)){
+                //在redis中存在用户的token
+                return false;
+            }
         }
         return true;
     }
