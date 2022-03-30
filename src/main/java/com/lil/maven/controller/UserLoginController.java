@@ -12,6 +12,7 @@ import com.lil.maven.responseformat.msgcode.GenericCode;
 import com.lil.maven.responseformat.RespondData;
 import com.lil.maven.service.TokenService;
 import com.lil.maven.service.UserLoginService;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class UserLoginController {
      * @param weChatUserInfo 请求参数
      * @return 返回ResultData响应体
      */
+    @ApiOperation(value = "微信用户登录接口")
     @PostMapping("/weChatLogin")
     public RespondData<Map> weChatLogin(@RequestBody WeChatUserInfo weChatUserInfo){
         if (weChatUserInfo.getCode() == null || weChatUserInfo.getRawData() == null){
@@ -79,7 +81,7 @@ public class UserLoginController {
             String token = tokenService.buildToken(userProfile.getUserId());
             Map<String,Object> map = new HashMap<>();
             map.put("token",token);
-            map.put("userMessage",userProfile);
+            map.put("userData",userProfile);
 
             RespondData<Map> respondData = RespondData.success(map);
             System.out.println(respondData);
@@ -88,6 +90,32 @@ public class UserLoginController {
             e.printStackTrace();
             return RespondData.fail(GenericCode.MSG_CODE500.getCode(), GenericCode.MSG_CODE500.getMsg());
         }
+    }
+
+    /**
+     * 使用手机号登录
+     * @param paramUser
+     * @return
+     */
+    @ApiOperation(value = "手机号用户登录")
+    @PostMapping("/phoneLogin")
+    public RespondData<Map> phoneLogin(@RequestBody User paramUser){
+        User user = userMapper.queryByUserName(paramUser.getUserName());
+        if (user == null){
+            //用户不存在
+            return RespondData.fail(GenericCode.MSG_CODE403.getCode(),"用户不存在");
+        }
+        boolean result = (paramUser.getUserPassword()).equals(user.getUserPassword());
+        if (!result){
+            //密码不匹配
+            return RespondData.fail(GenericCode.MSG_CODE403.getCode(),"登陆失败");
+        }
+        UserProfile userProfile = userLoginService.getUserProfile(user);
+        String token = tokenService.buildToken(user.getUserId());
+        Map<String,Object> map = new HashMap<>();
+        map.put("token",token);
+        map.put("userData",userProfile);
+        return RespondData.success(map);
     }
 
     @LoginCheck

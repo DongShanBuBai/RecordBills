@@ -22,4 +22,6 @@ public interface UserMapper {
 
     void insertAtOpenId(User user);     //第一次登陆，插入微信openID
     void updateUserLastLoginTime(User user);
+
+    boolean insertAtAll(User user);
 }

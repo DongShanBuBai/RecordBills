@@ -52,15 +52,45 @@ public class UserLoginServiceImpl implements UserLoginService {
         return jsonObject;
     }
 
-    /*@Override
-    public User normalUserLoginService(String username, String passord){
+    /**
+     * 用户手机号用户注册
+     * @param user
+     * @return
+     */
+    @Override
+    public UserProfile getUserProfile(User user){
+        UserProfile userProfile = userProfileMapper.queryAllByUserId(user);
+        return userProfile;
+    }
 
-    }*/
+    /**
+     * 用户手机号注册
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean register(User user){
+        try{
+            userMapper.insertAtAll(user);
+            Integer userId = user.getUserId();
+            UserProfile userProfile = new UserProfile();
+
+            userProfile.setUserId(userId);
+
+            userProfileMapper.insertAtAll(userProfile);
+            //手机号用户数据插入成功
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     /**
      * @param user
      * @param jsonObject
      */
+    @Override
     @Transactional
     public void addUserAndProfile(User user, JSONObject jsonObject){
         UserProfile userProfile = new UserProfile();

@@ -2,6 +2,7 @@ package com.lil.maven.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lil.maven.pojo.User;
+import com.lil.maven.pojo.UserProfile;
 
 /**
  * @Author:lil
@@ -9,6 +10,7 @@ import com.lil.maven.pojo.User;
  */
 public interface UserLoginService {
     JSONObject weChatUserLoginService(String code);
-//    User normalUserLoginService(String username,String passord);
+    UserProfile getUserProfile(User user);
+    boolean register(User user);
     void addUserAndProfile(User user, JSONObject jsonObject);
 }
