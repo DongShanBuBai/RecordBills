@@ -17,6 +17,9 @@
     <insert id="insertAtOpenId" parameterType="com.lil.maven.pojo.User" useGeneratedKeys="true" keyProperty="userId">
         insert into user(user_wechat_openid,last_login_time) value(#{userWechatOpenid},#{lastLoginTime})
     </insert>
+    <insert id="insertViaPhone" parameterType="com.lil.maven.pojo.User" useGeneratedKeys="true" keyProperty="userId">
+        insert into user(user_name,user_password,last_login_time) value(#{userName},#{userPassword},#{lastLoginTime})
+    </insert>
 
     <update id="updateUserLastLoginTime" parameterType="com.lil.maven.pojo.User">
         update user set last_login_time=#{lastLoginTime} where user_id=#{userId}

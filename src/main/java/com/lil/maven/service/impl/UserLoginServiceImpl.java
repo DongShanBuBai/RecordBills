@@ -53,7 +53,7 @@ public class UserLoginServiceImpl implements UserLoginService {
     }
 
     /**
-     * 用户手机号用户注册
+     * 获取用户信息
      * @param user
      * @return
      */
@@ -71,7 +71,7 @@ public class UserLoginServiceImpl implements UserLoginService {
     @Transactional
     public boolean register(User user){
         try{
-            userMapper.insertAtAll(user);
+            userMapper.insertViaPhone(user);
             Integer userId = user.getUserId();
             UserProfile userProfile = new UserProfile();
 
