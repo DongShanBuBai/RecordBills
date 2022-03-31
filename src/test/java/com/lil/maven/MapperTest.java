@@ -1,6 +1,8 @@
 package com.lil.maven;
 
+import com.lil.maven.Utils.RandomNum;
 import com.lil.maven.Utils.RedisUtil;
+import com.lil.maven.Utils.SendVerifyCode;
 import com.lil.maven.dao.mapper.UserMapper;
 import com.lil.maven.pojo.User;
 import com.lil.maven.responseformat.RespondData;
@@ -13,8 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @Author:lil
@@ -29,6 +33,11 @@ public class MapperTest {
 
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    RandomNum randomNum;
+
+    @Autowired
+    SendVerifyCode sendVerifyCode;
 /*    @Autowired
     RedisTemplate redisTemplate;*/
     @Test
@@ -69,6 +78,12 @@ public class MapperTest {
             logger.info("在缓存中查到了key--->[{}]的value[{}]",key,value);
         }else{
             logger.info("缓存未生效");
+        }
+    }
+    @Test
+    public void phoneVeifyCode(){
+        for (int i = 0;i < 100;i++){
+            System.out.println(randomNum.getRandomNum(5));
         }
     }
 }
