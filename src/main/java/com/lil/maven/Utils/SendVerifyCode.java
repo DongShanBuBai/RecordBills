@@ -20,7 +20,6 @@ import java.io.IOException;
 public class SendVerifyCode {
     private int appId = 0;
     private String appKey = "";
-//    private String[] phoneNumber = {"13100573667"};
     private int templateId = 0;
     private String smsSign = "";
 
